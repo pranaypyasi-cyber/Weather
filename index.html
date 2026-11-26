@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloudify | Live Weather, AQI &amp; Forecast</title>
+<meta name="description" content="Cloudify: live weather, 7-day forecast, hourly rain chance, air quality, UV index and smart tips for any city.">
+<meta name="theme-color" content="#4facfe">
+<!-- Step 14: favicon + share preview -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<!-- Step 15: PWA (installable app) -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cloudify">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cloudify | Live Weather">
+<meta property="og:description" content="Live weather, forecast, air quality and smart tips for any city.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Step 7: background sky + animation layer -->
+<div id="sky" aria-hidden="true"></div>
+<div id="fx" aria-hidden="true"></div>
+
+<main>
+  <header class="brand">
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sunG" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#fff3a8"/>
+            <stop offset="1" stop-color="#ffb627"/>
+          </linearGradient>
+          <linearGradient id="cloudG" gradientUnits="userSpaceOnUse" x1="14" y1="20" x2="50" y2="50">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#d6e8ff"/>
+          </linearGradient>
+        </defs>
+        <circle cx="47" cy="21" r="11" fill="url(#sunG)"/>
+        <g fill="url(#cloudG)">
+          <circle cx="22" cy="40" r="8"/>
+          <circle cx="33" cy="32" r="11"/>
+          <circle cx="45" cy="39" r="9"/>
+          <rect x="22" y="40" width="23" height="8"/>
+        </g>
+        <path d="M14 22 l1.6 3.8 3.8 1.6 -3.8 1.6 -1.6 3.8 -1.6 -3.8 -3.8 -1.6 3.8 -1.6z" fill="#ffffff" opacity="0.95"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">Cloudify</div>
+      <div class="brand-tag">Weather, beautifully.</div>
+    </div>
+    <!-- Step 8: °C / °F toggle -->
+    <div class="unit-toggle" role="group" aria-label="Temperature unit">
+      <button type="button" id="unit-c" class="unit-btn active" aria-pressed="true">°C</button>
+      <button type="button" id="unit-f" class="unit-btn" aria-pressed="false">°F</button>
+    </div>
+  </header>
+
+  <form id="search-form">
+    <div class="search-wrap">
+      <input id="city-input" type="text" placeholder="Search a city, e.g. Delhi" aria-label="City name" autocomplete="off" required>
+      <!-- Step 11: type karte hi city ke suggestions yaha aayenge -->
+      <ul id="suggestions" class="suggestions hidden" role="listbox"></ul>
+    </div>
+    <button type="button" id="location-btn" class="icon-btn" aria-label="Use my location" title="Use my location">📍</button>
+    <button type="submit">Search</button>
+  </form>
+
+  <!-- Step 13: Saved cities (compare) -->
+  <section id="saved" class="card hidden">
+    <h2>Saved cities</h2>
+    <div id="saved-list" class="saved-list"></div>
+  </section>
+
+  <!-- Loading / error message -->
+  <div id="message" class="card message">Search a city to see its weather.</div>
+
+  <!-- Step 14: Skeleton loading (cards ki shimmer shape) -->
+  <section id="skeleton" class="hidden" role="status" aria-live="polite">
+    <div class="card sk-card">
+      <div class="sk sk-line" style="width:40%"></div>
+      <div class="sk sk-circle"></div>
+      <div class="sk sk-big"></div>
+      <div class="sk sk-line" style="width:55%"></div>
+      <div class="sk-row"><div class="sk sk-box"></div><div class="sk sk-box"></div><div class="sk sk-box"></div></div>
+    </div>
+    <div class="card sk-card">
+      <div class="sk sk-line" style="width:30%"></div>
+      <div class="sk sk-block"></div>
+      <div class="sk sk-block"></div>
+    </div>
+    <div class="card sk-card">
+      <div class="sk sk-line" style="width:35%"></div>
+      <div class="sk sk-chart"></div>
+    </div>
+    <p class="sk-label" id="skeleton-text"></p>
+  </section>
+
+  <!-- Current weather -->
+  <section id="result" class="card hidden">
+    <button type="button" id="save-btn" class="star-btn" aria-label="Save this city" aria-pressed="false">☆</button>
+    <div class="city" id="city-name"></div>
+    <div class="icon" id="icon"></div>
+    <div class="temp" id="temp"></div>
+    <div class="desc" id="desc"></div>
+    <div class="stats">
+      <div class="stat"><b id="feels"></b><span>Feels like</span></div>
+      <div class="stat"><b id="humidity"></b><span>Humidity</span></div>
+      <div class="stat"><b id="wind"></b><span>Wind</span></div>
+    </div>
+    <!-- Step 14: last updated + manual refresh -->
+    <div class="updated-row">
+      <span id="updated"></span>
+      <button type="button" id="refresh-btn" class="refresh-btn" aria-label="Refresh weather">⟳ Refresh</button>
+    </div>
+  </section>
+
+  <!-- Step 12: Smart tips -->
+  <section id="tips" class="card hidden">
+    <h2>Smart tips</h2>
+    <div class="tip-headline"><span class="tip-icon" id="tip-icon"></span><span id="tip-text"></span></div>
+    <ul class="tip-list" id="tip-list"></ul>
+  </section>
+
+  <!-- Step 5: Air quality -->
+  <section id="aqi" class="card hidden">
+    <h2>Air quality</h2>
+    <div class="aqi-top">
+      <div class="aqi-value" id="aqi-value"></div>
+      <div>
+        <span class="aqi-badge" id="aqi-badge"></span>
+        <div class="aqi-pm" id="aqi-pm"></div>
+      </div>
+    </div>
+    <div class="aqi-bar"><div class="aqi-marker" id="aqi-marker"></div></div>
+    <div class="aqi-scale"><span>0</span><span>100</span><span>200</span><span>300+</span></div>
+    <p class="aqi-advice" id="aqi-advice"></p>
+  </section>
+
+  <!-- Step 11: Sunrise, sunset aur UV index -->
+  <section id="sun-uv" class="card hidden">
+    <h2>Sun &amp; UV</h2>
+    <div class="stats sun-times">
+      <div class="stat"><b id="sunrise-time"></b><span>🌅 Sunrise</span></div>
+      <div class="stat"><b id="sunset-time"></b><span>🌇 Sunset</span></div>
+      <div class="stat"><b id="day-length"></b><span>Daylight</span></div>
+    </div>
+    <div class="aqi-top">
+      <div class="aqi-value" id="uv-value"></div>
+      <div>
+        <span class="aqi-badge" id="uv-badge"></span>
+        <div class="aqi-pm" id="uv-peak"></div>
+      </div>
+    </div>
+    <div class="aqi-bar uv-bar"><div class="aqi-marker" id="uv-marker"></div></div>
+    <div class="aqi-scale"><span>UV 0</span><span>11+</span></div>
+    <p class="aqi-advice" id="uv-advice"></p>
+  </section>
+
+  <!-- Step 4: Hourly chart -->
+  <section id="hourly" class="card hidden">
+    <h2>Next 24 hours</h2>
+    <div class="chart-box"><canvas id="hourly-chart" aria-label="Hourly temperature chart"></canvas></div>
+  </section>
+
+  <!-- Step 3: 7-day forecast -->
+  <section id="forecast" class="card hidden">
+    <h2>7-day forecast</h2>
+    <div id="forecast-list"></div>
+  </section>
+
+  <footer class="app-footer">
+    <button type="button" id="install-btn" class="install-btn hidden">📲 Install Cloudify app</button>
+    <p id="ios-hint" class="ios-hint hidden">On iPhone: tap the Share button, then "Add to Home Screen".</p>
+    <p class="credit">Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a></p>
+  </footer>
+  <footer class="team-footer">
+    <p>Designed & Developed with ❤️ by</p>
+    <h3>DEVANSH-PRANAY</h3>
+    <span>© 2026 All Rights Reserved.</span>
+</footer>
+</main>
+
+<!-- Chart.js library, phir hamari script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,454 @@
+/* ---------- Basics: colors, layout ---------- */
+:root {
+  --sky-top: #4facfe;      /* background gradient ka upar wala color */
+  --sky-bottom: #00c6fb;   /* neeche wala color */
+  --card: rgba(255, 255, 255, 0.22);
+  --text: #ffffff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  min-height: 100dvh;       /* phone ke address bar ke saath sahi height */
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  color: var(--text);
+  background: var(--sky-bottom);
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px;
+}
+main { width: 100%; max-width: 440px; position: relative; z-index: 1; }
+
+/* ---------- Brand: logo + name ---------- */
+.brand { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+.logo {
+  width: 58px; height: 58px; flex-shrink: 0;
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.45), rgba(255,255,255,0.12));
+  border: 1px solid rgba(255,255,255,0.55);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.7);
+  backdrop-filter: blur(10px);
+  display: grid; place-items: center;
+}
+.logo svg { width: 42px; height: 42px; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.2)); }
+.brand-name { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+.brand-tag { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; letter-spacing: 0.3px; }
+
+/* ---------- Search form ---------- */
+form { display: flex; gap: 8px; margin-bottom: 20px; }
+input {
+  flex: 1; min-width: 0; padding: 14px 16px; font-size: 1rem;
+  border: none; border-radius: 14px; outline: none;
+}
+input:focus-visible, button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+button {
+  padding: 0 20px; font-size: 1rem; font-weight: 700; cursor: pointer;
+  border: none; border-radius: 14px; background: #ffd93d; color: #3b2f00;
+}
+
+/* Step 6: location button */
+.icon-btn { padding: 0 14px; font-size: 1.25rem; background: rgba(255,255,255,0.92); }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--card);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 28px 24px;
+}
+.card + .card { margin-top: 16px; }
+.card h2 { font-size: 1.05rem; margin-bottom: 10px; }
+.message { text-align: center; padding: 24px; font-size: 1.05rem; }
+.hidden { display: none; }
+
+/* ---------- Current weather ---------- */
+.city { font-size: 1.3rem; font-weight: 700; }
+.icon { font-size: 5rem; margin: 8px 0 0; }
+.temp { font-size: 4.5rem; font-weight: 800; line-height: 1; }
+.desc { font-size: 1.1rem; margin-top: 6px; opacity: 0.95; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 24px; }
+.stat { background: rgba(255, 255, 255, 0.2); border-radius: 16px; padding: 12px 8px; text-align: center; }
+.stat b { display: block; font-size: 1.1rem; }
+.stat span { font-size: 0.8rem; opacity: 0.9; }
+
+/* ---------- Step 5: Air quality ---------- */
+#aqi, #hourly, #forecast { padding: 18px 20px; }
+.aqi-top { display: flex; align-items: center; gap: 16px; }
+.aqi-value { font-size: 3.2rem; font-weight: 800; line-height: 1; }
+.aqi-badge {
+  display: inline-block; padding: 4px 12px; border-radius: 999px;
+  font-size: 0.85rem; font-weight: 700; color: #fff;
+  background: var(--aqi-color, #1e9e5a);
+}
+.aqi-pm { font-size: 0.8rem; opacity: 0.9; margin-top: 6px; }
+.aqi-bar {
+  position: relative; height: 10px; border-radius: 999px; margin: 18px 0 6px;
+  /* 0-300 scale: Good, Moderate, Sensitive, Unhealthy, Very unhealthy, Hazardous */
+  background: linear-gradient(90deg,
+    #1e9e5a 0%, #1e9e5a 16%, #e0b400 17%, #e0b400 32%, #e8770f 33%, #e8770f 49%,
+    #d63a3a 50%, #d63a3a 66%, #8e44ad 67%, #8e44ad 83%, #7b1e3a 84%);
+}
+.aqi-marker {
+  position: absolute; top: 50%; left: 0;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 3px solid rgba(0,0,0,0.35);
+  transform: translate(-50%, -50%);
+  transition: left 0.6s;
+}
+.aqi-scale { display: flex; justify-content: space-between; font-size: 0.75rem; opacity: 0.85; }
+.aqi-advice { font-size: 0.9rem; margin-top: 12px; line-height: 1.4; }
+
+/* ---------- Step 4: Hourly chart ---------- */
+.chart-box { position: relative; height: 200px; }
+
+/* ---------- Step 3: 7-day forecast ---------- */
+#forecast h2 { margin-bottom: 8px; }
+.day {
+  display: grid; grid-template-columns: 64px 36px 1fr auto;
+  align-items: center; gap: 8px; padding: 10px 0;
+  border-top: 1px solid rgba(255,255,255,0.25);
+}
+.day:first-of-type { border-top: none; }
+.day-name { font-weight: 700; }
+.day-icon { font-size: 1.5rem; text-align: center; }
+.day-desc { font-size: 0.85rem; opacity: 0.9; }
+.day-temps { font-weight: 700; white-space: nowrap; }
+.day-temps span { opacity: 0.7; font-weight: 400; }
+
+/* =====================================================
+   Step 7: Weather animations
+   ===================================================== */
+#sky {
+  position: fixed; inset: 0; z-index: -2;
+  background: linear-gradient(160deg, var(--sky-top), var(--sky-bottom));
+}
+#fx { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+#fx > * { position: absolute; }
+
+/* Baarish */
+.drop {
+  top: -30px; width: 2px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.8));
+  animation: fall linear infinite;
+}
+@keyframes fall { to { transform: translateY(115vh); } }
+
+/* Barf */
+.flake { top: -10px; background: #fff; border-radius: 50%; opacity: 0.9; animation: snow linear infinite; }
+@keyframes snow {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(24px, 55vh); }
+  100% { transform: translate(-12px, 115vh); }
+}
+
+/* Baadal */
+.cloud { left: -40%; background: rgba(255,255,255,0.55); border-radius: 100px; filter: blur(2px); animation: drift linear infinite; }
+.cloud::before, .cloud::after { content: ""; position: absolute; background: inherit; border-radius: 50%; }
+.cloud::before { width: 50%; height: 170%; top: -75%; left: 15%; }
+.cloud::after  { width: 35%; height: 130%; top: -45%; right: 15%; }
+@keyframes drift { to { transform: translateX(160vw); } }
+
+/* Sooraj */
+.sun {
+  top: -90px; right: -90px; width: 260px; height: 260px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,248,170,0.95) 0 26%, rgba(255,214,90,0.45) 44%, rgba(255,214,90,0) 70%);
+  animation: pulse 5s ease-in-out infinite;
+}
+@keyframes pulse { 50% { transform: scale(1.12); opacity: 0.85; } }
+
+/* Raat: chaand aur taare */
+.moon {
+  top: 56px; right: 36px; width: 64px; height: 64px; border-radius: 50%;
+  background: #fdf6d8;
+  box-shadow: inset -12px -5px 0 0 rgba(205,195,150,0.6), 0 0 40px rgba(255,250,220,0.5);
+}
+.star { background: #fff; border-radius: 50%; animation: twinkle ease-in-out infinite; }
+@keyframes twinkle { 50% { opacity: 0.15; } }
+.night .cloud { background: rgba(190,200,235,0.28); }
+
+/* Bijli */
+.flash { inset: 0; background: #fff; opacity: 0; animation: lightning 6s infinite; }
+@keyframes lightning { 0%, 91%, 96%, 100% { opacity: 0; } 92% { opacity: 0.55; } 93.5% { opacity: 0.1; } 94.5% { opacity: 0.45; } }
+
+/* Kohra */
+.fog {
+  left: -20%; width: 140%; height: 150px; filter: blur(14px);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: fogmove ease-in-out infinite alternate;
+}
+@keyframes fogmove { to { transform: translateX(15%); } }
+
+/* Jinko motion se dikkat hoti hai unke liye animation band */
+@media (prefers-reduced-motion: reduce) { #fx * { animation: none !important; } }
+
+/* =====================================================
+   Phone compatibility
+   ===================================================== */
+html { -webkit-text-size-adjust: 100%; }
+button { min-height: 48px; touch-action: manipulation; }      /* ungli se dabane layak size */
+.card, .logo { -webkit-backdrop-filter: blur(10px); }          /* iPhone Safari ke liye */
+.card { text-shadow: 0 1px 3px rgba(0,0,0,0.22); }             /* halke background pe bhi text padhne layak */
+
+@media (max-width: 480px) {
+  body { padding: 16px 12px; }
+  .brand { margin-bottom: 18px; }
+  .logo { width: 50px; height: 50px; border-radius: 15px; }
+  .logo svg { width: 36px; height: 36px; }
+  .brand-name { font-size: 1.6rem; }
+  .brand-tag { font-size: 0.8rem; }
+  form { gap: 6px; }
+  .card { padding: 22px 18px; border-radius: 20px; }
+  #aqi, #hourly, #forecast { padding: 16px; }
+  .icon { font-size: 4rem; }
+  .temp { font-size: 3.6rem; }
+  .stats { gap: 8px; }
+  .stat b { font-size: 1rem; }
+  .aqi-value { font-size: 2.6rem; }
+  .chart-box { height: 180px; }
+  .day { grid-template-columns: 52px 30px 1fr auto; gap: 6px; }
+  .day-desc { font-size: 0.8rem; }
+}
+
+/* =====================================================
+   Step 8: Unit toggle + loading spinner
+   ===================================================== */
+.unit-toggle {
+  margin-left: auto; display: flex; padding: 3px; border-radius: 999px;
+  background: rgba(255,255,255,0.22);
+}
+.unit-btn {
+  min-height: 38px; padding: 0 14px; border-radius: 999px;
+  font-size: 0.95rem; background: transparent; color: #fff;
+}
+.unit-btn.active { background: #fff; color: #27406b; }
+
+.spinner {
+  display: block; width: 28px; height: 28px; margin: 0 auto 12px;
+  border: 3px solid rgba(255,255,255,0.35); border-top-color: #fff;
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 380px) { .brand-tag { display: none; } }
+
+/* =====================================================
+   Step 9: Always-moving background
+   ===================================================== */
+/* Colors ab jhat se nahi, 1.2 second mein dheere badalte hain */
+@property --sky-top    { syntax: "<color>"; inherits: true; initial-value: #4facfe; }
+@property --sky-bottom { syntax: "<color>"; inherits: true; initial-value: #00c6fb; }
+#sky { overflow: hidden; transition: --sky-top 1.2s, --sky-bottom 1.2s; }
+
+/* Do badi glowing orbs jo dheere dheere behti rehti hain */
+#sky::before, #sky::after {
+  content: ""; position: absolute; width: 60vmax; height: 60vmax;
+  border-radius: 50%; filter: blur(60px); opacity: 0.35;
+}
+#sky::before {
+  top: -20vmax; left: -15vmax;
+  background: radial-gradient(circle, rgba(255,255,255,0.9), transparent 65%);
+  animation: orb1 22s ease-in-out infinite alternate;
+}
+#sky::after {
+  bottom: -25vmax; right: -20vmax;
+  background: radial-gradient(circle, rgba(255,190,120,0.85), transparent 65%);
+  animation: orb2 28s ease-in-out infinite alternate;
+}
+@keyframes orb1 { to { transform: translate(25vmax, 15vmax) scale(1.15); } }
+@keyframes orb2 { to { transform: translate(-20vmax, -18vmax) scale(1.2); } }
+
+@media (max-width: 600px) { #sky::before, #sky::after { filter: blur(40px); } }
+@media (prefers-reduced-motion: reduce) { #sky::before, #sky::after { animation: none; } }
+
+/* =====================================================
+   Step 10: Live sky (sun/moon path, birds, shooting stars)
+   ===================================================== */
+/* Sooraj aur chaand ab JS se left/top milta hai, aur 30 second mein smoothly khisakta hai */
+.sun  { right: auto; margin: -130px 0 0 -130px; transition: left 30s linear, top 30s linear; }
+.moon { right: auto; margin: -32px 0 0 -32px;  transition: left 30s linear, top 30s linear; }
+
+/* Parinde (din mein) */
+.bird {
+  left: -8%; width: 28px; height: 11px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 12'%3E%3Cpath d='M1 10 Q9 0 16 9 Q23 0 31 10' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: 0.85;
+  animation: birdfly linear infinite, flap 0.5s ease-in-out infinite alternate;
+}
+@keyframes birdfly { to { left: 108%; } }
+@keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(0.35); } }
+
+/* Toot-ta taara (raat mein) */
+.shooting {
+  width: 130px; height: 2px; border-radius: 2px; opacity: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0), #fff);
+  animation: shoot linear infinite;
+}
+@keyframes shoot {
+  0%   { transform: translate(0, 0) rotate(35deg); opacity: 0; }
+  2%   { opacity: 1; }
+  10%  { transform: translate(42vw, 30vw) rotate(35deg); opacity: 0; }
+  100% { transform: translate(42vw, 30vw) rotate(35deg); opacity: 0; }
+}
+
+/* =====================================================
+   Step 11: Search suggestions + Sun & UV card
+   ===================================================== */
+.search-wrap { position: relative; flex: 1; min-width: 0; z-index: 5; }
+.search-wrap input { width: 100%; }
+.suggestions {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  list-style: none; background: #fff; color: #1d2b44; text-shadow: none;
+  border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.25); overflow: hidden;
+}
+.suggestions li {
+  min-height: 46px; padding: 10px 16px; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.suggestions li + li { border-top: 1px solid #eef1f6; }
+.suggestions li:hover, .suggestions li.active { background: #eaf3ff; }
+.sg-name { font-weight: 700; }
+.sg-sub { font-size: 0.8rem; color: #5d6b86; }
+
+#sun-uv { padding: 18px 20px; }
+.sun-times { margin: 4px 0 20px; }
+.sun-times .stat b { font-size: 1rem; }
+/* UV scale 0-12: Low, Moderate, High, Very high, Extreme */
+.uv-bar {
+  background: linear-gradient(90deg,
+    #1e9e5a 0%, #1e9e5a 24%, #e0b400 25%, #e0b400 49%, #e8770f 50%, #e8770f 66%,
+    #d63a3a 67%, #d63a3a 91%, #8e44ad 92%);
+}
+@media (max-width: 480px) { #sun-uv { padding: 16px; } }
+
+/* =====================================================
+   Step 12: Smart tips + rain chance
+   ===================================================== */
+#tips { padding: 18px 20px; }
+.tip-headline { display: flex; align-items: center; gap: 12px; font-size: 1.1rem; font-weight: 700; line-height: 1.3; }
+.tip-icon { font-size: 2rem; }
+.tip-list { list-style: none; margin-top: 12px; }
+.tip-list li {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 8px; padding: 10px 12px; border-radius: 14px;
+  background: rgba(255,255,255,0.2); font-size: 0.92rem; line-height: 1.35;
+}
+.tip-list .t-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+.chart-box { height: 220px; }
+@media (max-width: 480px) { #tips { padding: 16px; } .chart-box { height: 200px; } }
+
+/* =====================================================
+   Step 13: Saved cities
+   ===================================================== */
+#result { position: relative; }
+.city { padding-right: 56px; }
+.star-btn {
+  position: absolute; top: 14px; right: 14px;
+  width: 46px; height: 46px; min-height: 46px; padding: 0; border-radius: 50%;
+  background: rgba(255,255,255,0.25); color: #fff; font-size: 1.5rem; line-height: 1;
+}
+.star-btn.saved { color: #ffd93d; background: rgba(255,255,255,0.38); }
+
+#saved { padding: 16px 16px 12px; }
+.saved-list {
+  display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 8px;
+  scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+}
+.saved-item { position: relative; flex: 0 0 auto; scroll-snap-align: start; }
+.saved-open {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  width: 112px; min-height: 0; padding: 12px 8px 10px; border-radius: 18px;
+  background: rgba(255,255,255,0.22); color: #fff; font-weight: 400; text-shadow: inherit;
+}
+.saved-item.active .saved-open { outline: 2px solid #fff; background: rgba(255,255,255,0.34); }
+.s-icon { font-size: 1.6rem; line-height: 1.2; }
+.s-temp { font-size: 1.3rem; font-weight: 800; }
+.s-name { max-width: 96px; font-size: 0.82rem; opacity: 0.95; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.saved-remove {
+  position: absolute; top: 4px; right: 4px;
+  width: 28px; height: 28px; min-height: 28px; padding: 0; border-radius: 50%;
+  background: rgba(0,0,0,0.18); color: #fff; font-size: 0.8rem; line-height: 1;
+}
+
+/* Chhota message (jaise "Saved!") */
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+  max-width: 90vw; padding: 12px 18px; border-radius: 999px;
+  background: rgba(20,30,55,0.92); color: #fff; font-size: 0.92rem; z-index: 50;
+}
+
+/* =====================================================
+   Step 14: Polish (skeleton loading, refresh)
+   ===================================================== */
+.sk {
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.16) 25%, rgba(255,255,255,0.36) 50%, rgba(255,255,255,0.16) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+.sk-card { text-shadow: none; }
+.sk-line   { height: 16px; margin-bottom: 14px; }
+.sk-circle { width: 76px; height: 76px; border-radius: 50%; margin: 6px 0 14px; }
+.sk-big    { height: 56px; width: 45%; margin-bottom: 14px; }
+.sk-row    { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 22px; }
+.sk-box    { height: 58px; border-radius: 16px; }
+.sk-block  { height: 46px; margin-top: 10px; }
+.sk-chart  { height: 150px; }
+.sk-label  { text-align: center; margin-top: 14px; font-size: 0.95rem; opacity: 0.9; }
+@media (prefers-reduced-motion: reduce) { .sk { animation: none; } }
+
+.updated-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-top: 18px; font-size: 0.82rem; opacity: 0.92;
+}
+.refresh-btn {
+  min-height: 36px; padding: 0 14px; border-radius: 999px;
+  background: rgba(255,255,255,0.25); color: #fff; font-size: 0.85rem; font-weight: 700;
+}
+.refresh-btn.spinning { opacity: 0.55; pointer-events: none; }
+
+/* =====================================================
+   Step 15: Install button + footer
+   ===================================================== */
+.app-footer { margin-top: 22px; text-align: center; font-size: 0.82rem; opacity: 0.92; padding-bottom: 12px; }
+.install-btn {
+  min-height: 46px; padding: 0 22px; border-radius: 999px;
+  background: #ffd93d; color: #3b2f00; font-size: 0.95rem; font-weight: 700;
+}
+.ios-hint { margin-top: 10px; line-height: 1.4; }
+.credit { margin-top: 12px; opacity: 0.85; }
+.credit a { color: #fff; }
+
+/* Installed app ke andar (full screen) upar thodi jagah chhodo */
+@media (display-mode: standalone) { body { padding-top: max(24px, env(safe-area-inset-top)); } }
+.team-footer {
+    width: 100%;
+    text-align: center;
+    padding: 20px 10px;
+    margin-top: 40px;
+    color: white;
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    box-sizing: border-box;
+}
+
+.team-footer p {
+    font-size: 13px;
+    margin-bottom: 5px;
+    opacity: 0.8;
+}
+
+.team-footer h3 {
+    font-size: 20px;
+    letter-spacing: 3px;
+    margin: 5px 0;
+    font-weight: 700;
+}
+
+.team-footer span {
+    font-size: 11px;
+    opacity: 0.7;
+}
